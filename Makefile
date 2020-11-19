@@ -1,5 +1,7 @@
+LOGFILE=$(LOGPATH)$(shell date)
+
 makeBuild:
-	gcc main.c -o execMain -l wiringPi -lpthread
+	gcc main.c navigation.c -o execMain -l wiringPi -lpthread
 
 gitPush: 
 	git add .
@@ -8,4 +10,5 @@ gitPush:
 
 gitPull:
 	git pull origin master
+
 
