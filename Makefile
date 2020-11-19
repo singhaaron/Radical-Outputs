@@ -5,7 +5,7 @@ makeBuild:
 
 gitPush: 
 	git add .
-	git commit -m "Update"
+	git commit -m "${LOGFILE}: ${USER}"
 	git push -u origin master
 
 gitPull:
