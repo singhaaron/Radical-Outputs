@@ -1,2 +1,8 @@
 scratchCode.c 
 .DS_Store
+
+# IDE files
+.idea
+CMakeLists.txt
+
+.vscode
