@@ -1,8 +1,12 @@
-### Implementation
+# Title
 
--Post width modulation w/ individual motor
+RadicalOutputs RaspBerry Pi Vehicle
+
+## Getting Started
 
 ### Instructions
+
+make makeBuild
 
 ### Equipment
 
@@ -20,16 +24,10 @@ Detection
 
 -(2)Motor Navigation: Turning & Conditions
 
--CONSOLE_OUTPUT: lineSensor(), backUp(),
+#### Brook & Codey
 
-## Brook
+-Sensors Function
 
--
+#### Aaron & Andrew
 
-## Codey
-
-## Aaron
-
-## Andrew
-
--assemblation of hardware
+-Motor Function

@@ -4,12 +4,14 @@
 * Student ID:**********
 * Project: Vehicle
 *
-* File: navigation.c
+* File: motors.c
 *
 * Description:
-* Vehicle Functions
+* Motor Functions
 ***************************************************************/
-#include "navigation.h"
+#include "motors.h"
+
+/****** RPI L298P MOTOR SHIELD************************************/
 //DMX:Direction Motor Type , VMX:Voltage Motor Type, Direction: 0 or 1, High-Forward,Low-Reverse
 #define START_MOTOR(DMX, VMX, DIRECTION)           \
     for (int index = 25; index < 125; index += 25) \
@@ -25,45 +27,66 @@
         softPwmWrite(VMX, index);                  \
         delay(500);                                \
     }
-
-//Just here for Tempalte
-bool obstacle, trail = false;
+/***END****/
+/***ANDREW's MOTOR SHIELD************************************/
+//MOT_X: Type Motor:Reverse&Forward
+#define START_MOTOR_V2(MOT_X)      \
+    softPwmWrite(VOLT_MOT_A, 100); \
+    softPwmWrite(MOT_X, 100);
+#define STOP_MOTOR_V2(MOT_X)     \
+    softPwmWrite(VOLT_MOT_A, 0); \
+    softPwmWrite(MOT_X, 0);
+/***END****/
 
 //Motor A & B - Forward Motion
-void *MotorA()
+void *runMotorA()
 {
-    START_MOTOR(DIRECTION_MOTOR_A, VOLTAGE_MOTOR_A, 1); //Gradually Churn Forward
-    while (triggerForward)
+    do
     {
-        (true /*Check states if reversal & Stop is needed*/) ? printf("ContinueExec") : printf("Break");
+        if (triggerForward)
+        {
+            START_MOTOR_V2(F_MOT_A)
+            START_MOTOR_V2(F_MOT_B)
+        }
         if (obstacle)
         {
-            STOP_MOTOR(DIRECTION_MOTOR_A, VOLTAGE_MOTOR_A, 1)
+            STOP_MOTOR_V2(F_MOT_A)
+            STOP_MOTOR_V2(F_MOT_B)
             triggerForward = false;
         }
         if (trail)
         {
-            STOP_MOTOR(DIRECTION_MOTOR_A, VOLTAGE_MOTOR_A, 1)
+            STOP_MOTOR_V2(F_MOT_A)
+            STOP_MOTOR_V2(F_MOT_B)
             triggerForward = false;
         }
-    }
+    } while (endProgram == false);
+    STOP_MOTOR_V2(F_MOT_A)
+    STOP_MOTOR_V2(F_MOT_B)
 }
 //Motor C & D - Reverse Motion
-void *MotorC()
+void *runMotorC()
 {
-    START_REVERSEMOTOR(DIRECTION_MOTOR_C, VOLTAGE_MOTOR_C, 0); //Gradually Churn Reverse
-    while (triggerReverse)
+    do
     {
-        (true /*Check State/Condition */) ? printf("ContinueExec") : printf("Break");
+        if (triggerReverse)
+        {
+            START_MOTOR_V2(R_MOT_A)
+            START_MOTOR_V2(R_MOT_B)
+        }
         if (obstacle)
         {
-            STOP_MOTOR(DIRECTION_MOTOR_C, VOLTAGE_MOTOR_C, 0)
+            STOP_MOTOR_V2(R_MOT_A)
+            STOP_MOTOR_V2(R_MOT_B)
             triggerReverse = false;
         }
         if (trail)
         {
-            STOP_MOTOR(DIRECTION_MOTOR_C, VOLTAGE_MOTOR_C, 0)
+            STOP_MOTOR_V2(R_MOT_A)
+            STOP_MOTOR_V2(R_MOT_B)
             triggerReverse = false;
         }
-    }
+    } while (endProgram == false);
+    STOP_MOTOR_V2(R_MOT_A)
+    STOP_MOTOR_V2(R_MOT_B)
 }
