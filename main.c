@@ -8,11 +8,9 @@
 #include <fcntl.h>   //Open(),O_Rdly(flags)
 
 #include "Sensors/obstacle.h"
-#include "Motors/motors.h"
 //Definition of Macro
 
 #define PI_SYSTEM 0
-//***************************************************************/
 #if PI_SYSTEM
 #include <wiringPi.h> //Wiring Pi Library
 #include <softPwm.h>  //PWM Library
@@ -23,12 +21,10 @@ int main()
 #if PI_SYSTEM
     //*********************WIRING SETUPS**************************//
     wiringPiSetup();
-
     initSensors();
     checkObstacleSensors();
 //**********************Wiring_SetUp:End**************************//
 #endif
-    printf("MainThread\n");
 
     // Testing obstacle detection using both sensors
     for (int i = 0; i < 40; i++)
@@ -37,25 +33,6 @@ int main()
         delay(500);
     }
     setShouldRun(0);
-
-    //MOTOR-TEST-START
-    pthread_t MotorA;
-    pthread_t MotorB;
-
-    //Set Forward
-    triggerForward = true;
-    triggerReverse = false;
-
-    //Motors Init
-    pthread_create(&MotorA, NULL, &runMotorA, NULL);
-    pthread_create(&MotorB, NULL, &runMotorC, NULL);
-
-    //Turn Off Motors Post-5Seconds
-    delay(5000);
-    endProgram = true;
-    //MOTOR_TEST-END
-    pthread_join(&MotorA, NULL);
-    pthread_join(&MotorB, NULL);
 
     return 1;
 }

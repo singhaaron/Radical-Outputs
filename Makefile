@@ -1,9 +1,11 @@
 LOGFILE=$(LOGPATH)$(shell date)
 SENSORS = Sensors/*.c Sensors/*.h
-MOTORS=Motors/*.c Motors/*.h
+MOTORS=Motors/motors.c
 
 makeBuild:
 	gcc main.c $(MOTORS) $(SENSORS) -o execMain -l wiringPi -lpthread
+	gcc motorTest.c $(MOTORS) -o execMotorT -l wiringPi -lpthread
+
 # do gitPush USER="INPUT_NAME" MESSAGE="Details"
 gitPush: 
 	git add .

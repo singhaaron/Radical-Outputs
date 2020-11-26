@@ -1,39 +1,35 @@
 #ifndef MOTORS_H
 #define MOTORS_H
-//Header File
-#include <stdbool.h> //Bool
+#include <stdbool.h>
+//Motor Macros
+//MOTOR-1
+#define F_MOT_A 3
+#define R_MOT_A 2
+#define VOLT_MOT_A 0
+//MOTOR-2
+#define F_MOT_B 4
+#define R_MOT_B 5
+#define VOLT_MOT_B 6
+//MOTOR-3
+#define F_MOT_C 13
+#define R_MOT_C 14
+#define VOLT_MOT_C 12
+//MOTOR-4
+#define F_MOT_D 10
+#define R_MOT_D 11
+#define VOLT_MOT_D 26
 
-//Motor Pins
-#define F_MOT_A 3    //Forward
-#define F_MOT_B 100  //Forward
-#define R_MOT_A 2    //Reverse
-#define R_MOT_B 100  //Reverse
-#define VOLT_MOT_A 0 //PowerSupply
+//***************WiringPi***************//
+static void setup();
+static void allOff();
+static void interruptHandlers(const int signals);
+//***************WiringPi***************//
 
-//Global Variable
-bool directionLeft, directionRight;
-bool triggerForward, triggerReverse = false;
-bool obstacle, trail = false;
-bool endProgram = false;
+extern bool A_triggerForward, A_triggerReverse, B_triggerForward, B_triggerReverse, C_triggerForward, C_triggerReverse, D_triggerForward, D_triggerReverse, obstacle, onTrail, endRun;
 
-//Sensor Methods
-void *offTrail() {}
-void *onTrail() {}
-void *detectObstacle(){};
-void *detectLine(){};
-//Navigation Methods
-void *reNavigate(){};
-void *turnNSWE(){};
-
-//Motor
-void *runMotorA(){}; //Top_Left: 1
-void *runMotorB(){}; //Top_Right:2
-void *runMotorC(){}; //Bottom_Left:3
-void *runMotorD(){}; //Bottom_Left:4
-
-void *MotorReverse() {}
-void *MotorBakwards() {}
-void *MotorForwards() {}
-void *MotorTurn(float degree) {}
+void *runMotorA();
+void *runMotorB();
+void *runMotorC();
+void *runMotorD();
 
 #endif
