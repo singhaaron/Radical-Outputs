@@ -19,6 +19,7 @@ void initSensors() {
     pinMode(SERVO_TRIGGER, SOFT_PWM_OUTPUT);
     pullUpDnControl(SERVO_TRIGGER, PUD_OFF);
     softPwmCreate(SERVO_TRIGGER, 0, 50);
+    softPwmWrite(SERVO_TRIGGER, 15);
 
     shouldRun = 1;
     isBlockedByObstacle = 0;
@@ -107,7 +108,7 @@ void moveAroundObstacle() {
 //        turnRight();
     }
 
-    // Once we've lost the obstacle, soft turn right until we get back to the line.
+    // Soft turn right until we get back to the line.
     // TODO: I think this will just turn circles around the obstacle forever. Will need some work.
 //    while (offTheLine) {
 //        moveRight();
