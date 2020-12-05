@@ -8,9 +8,9 @@
 #include <fcntl.h>   //Open(),O_Rdly(flags)
 
 #include "Sensors/obstacle.h"
-//Definition of Macros
+//Definition of Macro
+
 #define PI_SYSTEM 0
-//***************************************************************/
 #if PI_SYSTEM
 #include <wiringPi.h> //Wiring Pi Library
 #include <softPwm.h>  //PWM Library
@@ -21,12 +21,10 @@ int main()
 #if PI_SYSTEM
     //*********************WIRING SETUPS**************************//
     wiringPiSetup();
-
     initSensors();
     checkObstacleSensors();
 //**********************Wiring_SetUp:End**************************//
 #endif
-    printf("MainThread\n");
 
     // Testing obstacle detection using both sensors
 //    for (int i = 0; i < 40; i++) {
@@ -34,6 +32,7 @@ int main()
 //        delay(500);
 //    }
 //    setShouldRun(0);
+
 
     return 1;
 }
