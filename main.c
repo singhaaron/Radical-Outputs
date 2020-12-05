@@ -29,11 +29,11 @@ int main()
     printf("MainThread\n");
 
     // Testing obstacle detection using both sensors
-    for (int i = 0; i < 40; i++) {
-        printf("Current state of collisions: %d\n", isBlockedByObstacle);
-        delay(500);
-    }
-    setShouldRun(0);
+//    for (int i = 0; i < 40; i++) {
+//        printf("Current state of collisions: %d\n", isBlockedByObstacle);
+//        delay(500);
+//    }
+//    setShouldRun(0);
 
     return 1;
 }
