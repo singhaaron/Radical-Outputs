@@ -47,7 +47,7 @@ void checkSensors() {
                 delay(5000);
                 isWaitingForObstacle = 1;
             } else {
-//                moveAroundObstacle();
+                moveAroundObstacle();
             }
             pthread_mutex_unlock(&mutex);
         } else {
@@ -60,7 +60,7 @@ void checkSensors() {
                     delay(5000);
                     isWaitingForObstacle = 1;
                 } else {
-//                    moveAroundObstacle();
+                    moveAroundObstacle();
                 }
             } else {
                 isBlockedByObstacle = 0;
@@ -99,21 +99,23 @@ float echoSensorDistance() {
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the right.
     softPwmWrite(SERVO_TRIGGER, 25);
-    // Hard turn to the left, in place.
-//    turnLeft();
+    // Hard turn to the left, in place about 90 degrees.
+    // This will depend on how far the servo allows the sensor to rotate.
+    // turnLeft(90); // placeholder function
 
-    // If we can still see the obstacle on the right of the vehicle, turn soft right while moving forward.
-    // TODO: this will need to be fine tuned once we see how the car handles.
-    while (echoSensorDistance() <= DISTANCE_THRESHOLD) {
-//        turnRight();
+    // Rotate right in place until the obstacle is present.
+    while (echoSensorDistance() >= DISTANCE_THRESHOLD) {
+        // turnRight(10); //placeholder function
     }
 
-    // Soft turn right until we get back to the line.
-    // TODO: I think this will just turn circles around the obstacle forever. Will need some work.
-//    while (offTheLine) {
-//        moveRight();
-//    }
+    // Soft turn right around the obstacle until we get back to the line.
+    while (offTheLine) { // placeholder variable
+        // moveRight(10);
+    }
 
+    // Reset position of the echo sensor and rotate the car.
+    softPwmWrite(SERVO_TRIGGER, 15);
+    // turnLeft(45); // placeholder function
 }
 
 void testServoMotor() {
