@@ -255,15 +255,15 @@ void *runMotor(void *u)
             softPwmWrite(F_MOT_B, 75);
             softPwmWrite(F_MOT_C, 25);
             softPwmWrite(F_MOT_D, 75);
-            usleep(1000000); //1S
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000); //1S
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
         }
 
         else if (ninetyDegRight)
@@ -276,24 +276,24 @@ void *runMotor(void *u)
             // softPwmWrite(R_MOT_C, 0);
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
-            usleep(1000000); //1sec
+            // usleep(1000000); //1sec
             softPwmWrite(VOLT_MOT_A, 75);
             softPwmWrite(VOLT_MOT_B, 25);
             softPwmWrite(VOLT_MOT_C, 75);
-            softPwmWrite(VOLT_MOT_D, 40);
+            softPwmWrite(VOLT_MOT_D, 50);
             softPwmWrite(F_MOT_A, 75);
-            softPwmWrite(F_MOT_B, 0);
+            softPwmWrite(F_MOT_B, 10);
             softPwmWrite(F_MOT_C, 75);
-            softPwmWrite(F_MOT_D, 0);
-            usleep(1000000); //1sec
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
+            softPwmWrite(F_MOT_D, 25);
+            // usleep(1000000); //1sec
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
         }
         else if (threesixtyDeg)
         {
@@ -349,7 +349,7 @@ int main()
     // usleep(700000);
     // driveDirection = Backward;
     // usleep(700000);
-    ninetyDegLeft = true;
+    ninetyDegRight = true;
     usleep(1000000);
     haltProgram = true;
     allOff();
