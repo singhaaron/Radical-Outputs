@@ -80,7 +80,7 @@ bool ninetyDegLeft, ninetyDegRight, threesixtyDeg = false; //Static Turns
 //Wiring Pi Starter
 static void setup()
 {
-    printf("setting up the program!");
+    printf("setting up the program!\n");
     pinMode(F_MOT_A, SOFT_PWM_OUTPUT);
     pinMode(R_MOT_A, SOFT_PWM_OUTPUT);
     pinMode(VOLT_MOT_A, SOFT_PWM_OUTPUT);
@@ -139,71 +139,72 @@ void *runMotor(void *u)
         //Motor Directions
         if (driveDirection == LeftLeft)
         {
-            softPwmWrite(VOLT_MOT_A, 0);
-            softPwmWrite(VOLT_MOT_B, 0);
-            softPwmWrite(VOLT_MOT_C, 0);
-            softPwmWrite(VOLT_MOT_D, 0);
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
-            usleep(1000000); //1s
+            // softPwmWrite(VOLT_MOT_A, 0);
+            // softPwmWrite(VOLT_MOT_B, 0);
+            // softPwmWrite(VOLT_MOT_C, 0);
+            // softPwmWrite(VOLT_MOT_D, 0);
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000); //1s
             //Sharper Left
-            softPwmWrite(VOLT_MOT_A, 60);
-            softPwmWrite(VOLT_MOT_B, 10);
-            softPwmWrite(VOLT_MOT_C, 60);
-            softPwmWrite(VOLT_MOT_D, 10);
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 60);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 60);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 60);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 60);
-            usleep(1000000);                         //1S
-            driveDirection = lineMatrix[0][1][0][0]; //Set Back to Forward
-        }
-        if (driveDirection == RightRight)
-        {
-            softPwmWrite(VOLT_MOT_A, 0);
-            softPwmWrite(VOLT_MOT_B, 0);
-            softPwmWrite(VOLT_MOT_C, 0);
-            softPwmWrite(VOLT_MOT_D, 0);
-            softPwmWrite(F_MOT_A, 0);
+            softPwmWrite(VOLT_MOT_A, 30);
+            softPwmWrite(VOLT_MOT_B, 60);
+            softPwmWrite(VOLT_MOT_C, 30);
+            softPwmWrite(VOLT_MOT_D, 60);
+            softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
+            softPwmWrite(F_MOT_B, 100);
             softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
+            softPwmWrite(F_MOT_C, 100);
             softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
+            softPwmWrite(F_MOT_D, 100);
             softPwmWrite(R_MOT_D, 0);
-            usleep(1000000); //1s
-            softPwmWrite(VOLT_MOT_A, 20);
-            softPwmWrite(VOLT_MOT_B, 100);
-            softPwmWrite(VOLT_MOT_C, 20);
-            softPwmWrite(VOLT_MOT_D, 100);
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 100);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 100);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 100);
-            softPwmWrite(F_MOT_D, 0);
-            usleep(1000000);                         //1s
-            driveDirection = lineMatrix[0][1][0][0]; //Set Back to Forward
+            // usleep(1000000);                         //1S
+            // driveDirection = lineMatrix[0][1][0][0]; //Set Back to Forward
         }
-        if (driveDirection == Forward)
+        else if (driveDirection == RightRight)
+        {
+            // softPwmWrite(VOLT_MOT_A, 0);
+            // softPwmWrite(VOLT_MOT_B, 0);
+            // softPwmWrite(VOLT_MOT_C, 0);
+            // softPwmWrite(VOLT_MOT_D, 0);
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000); //1s
+            softPwmWrite(VOLT_MOT_A, 60);
+            softPwmWrite(VOLT_MOT_B, 30);
+            softPwmWrite(VOLT_MOT_C, 60);
+            softPwmWrite(VOLT_MOT_D, 30);
+            softPwmWrite(F_MOT_A, 100);
+            softPwmWrite(R_MOT_A, 0);
+            softPwmWrite(F_MOT_B, 100);
+            softPwmWrite(R_MOT_B, 0);
+            softPwmWrite(F_MOT_C, 100);
+            softPwmWrite(R_MOT_C, 0);
+            softPwmWrite(F_MOT_D, 100);
+            softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000);                         //1s
+            // driveDirection = lineMatrix[0][1][0][0]; //Set Back to Forward
+        }
+        else if (driveDirection == Forward)
         {
             //All Motors Charge Forward
-            softPwmWrite(VOLT_MOT_A, 100);
-            softPwmWrite(VOLT_MOT_B, 100);
-            softPwmWrite(VOLT_MOT_C, 100);
-            softPwmWrite(VOLT_MOT_D, 100);
+            softPwmWrite(VOLT_MOT_A, 60);
+            softPwmWrite(VOLT_MOT_B, 60);
+            softPwmWrite(VOLT_MOT_C, 60);
+            softPwmWrite(VOLT_MOT_D, 60);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
             softPwmWrite(F_MOT_B, 100);
@@ -213,27 +214,27 @@ void *runMotor(void *u)
             softPwmWrite(F_MOT_D, 100);
             softPwmWrite(R_MOT_D, 0);
         }
-        if (driveDirection == Backward)
+        else if (driveDirection == Backward)
         {
             //Stop 1S
-            usleep(1000000); //1s
-            softPwmWrite(VOLT_MOT_A, 0);
-            softPwmWrite(VOLT_MOT_B, 0);
-            softPwmWrite(VOLT_MOT_C, 0);
-            softPwmWrite(VOLT_MOT_D, 0);
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000); //1s
+            // softPwmWrite(VOLT_MOT_A, 0);
+            // softPwmWrite(VOLT_MOT_B, 0);
+            // softPwmWrite(VOLT_MOT_C, 0);
+            // softPwmWrite(VOLT_MOT_D, 0);
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
             //All Motors Charge Backward
-            softPwmWrite(VOLT_MOT_A, 100);
-            softPwmWrite(VOLT_MOT_B, 100);
-            softPwmWrite(VOLT_MOT_C, 100);
-            softPwmWrite(VOLT_MOT_D, 100);
+            softPwmWrite(VOLT_MOT_A, 60);
+            softPwmWrite(VOLT_MOT_B, 60);
+            softPwmWrite(VOLT_MOT_C, 60);
+            softPwmWrite(VOLT_MOT_D, 60);
             softPwmWrite(F_MOT_A, 0);
             softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 0);
@@ -244,7 +245,7 @@ void *runMotor(void *u)
             softPwmWrite(R_MOT_D, 100);
         }
         //Static Turns
-        if (ninetyDegLeft)
+        else if (ninetyDegLeft)
         {
             softPwmWrite(VOLT_MOT_A, 25);
             softPwmWrite(VOLT_MOT_B, 75);
@@ -265,16 +266,16 @@ void *runMotor(void *u)
             softPwmWrite(R_MOT_D, 0);
         }
 
-        if (ninetyDegRight)
+        else if (ninetyDegRight)
         {
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
             usleep(1000000); //1sec
             softPwmWrite(VOLT_MOT_A, 75);
             softPwmWrite(VOLT_MOT_B, 25);
@@ -294,17 +295,17 @@ void *runMotor(void *u)
             softPwmWrite(F_MOT_D, 0);
             softPwmWrite(R_MOT_D, 0);
         }
-        if (threesixtyDeg)
+        else if (threesixtyDeg)
         {
-            softPwmWrite(F_MOT_A, 0);
-            softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 0);
-            softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 0);
-            softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 0);
-            softPwmWrite(R_MOT_D, 0);
-            usleep(1000000); //1sec
+            // softPwmWrite(F_MOT_A, 0);
+            // softPwmWrite(R_MOT_A, 0);
+            // softPwmWrite(F_MOT_B, 0);
+            // softPwmWrite(R_MOT_B, 0);
+            // softPwmWrite(F_MOT_C, 0);
+            // softPwmWrite(R_MOT_C, 0);
+            // softPwmWrite(F_MOT_D, 0);
+            // softPwmWrite(R_MOT_D, 0);
+            // usleep(1000000); //1sec
             softPwmWrite(VOLT_MOT_A, 100);
             softPwmWrite(VOLT_MOT_B, 100);
             softPwmWrite(VOLT_MOT_C, 100);
@@ -330,22 +331,29 @@ void *runMotor(void *u)
 
 int main()
 {
-    driveDirection = lineMatrix[0][1][0][0]; //Updated with Line.C
+    signal(SIGINT, interruptHandlers);
+	if(-1 == wiringPiSetup()){                     //check if wiring pi 
+							//failed
+		printf("Failed to setup Wiring Pi!\n");
+		return 1;
+	}
+    setup();
     pthread_t MotorThread;
     pthread_create(&MotorThread, NULL, &runMotor, NULL);
     /*******************************Test************************/
-    usleep(10000);
-    driveDirection = lineMatrix[0][1][0][0]; //Forward
-    usleep(10000);
-    driveDirection = lineMatrix[0][0][1][1]; //RightRight
-    usleep(10000);
-    driveDirection = lineMatrix[1][0][0][0]; //LeftLeft
-    usleep(10000);
-    driveDirection = lineMatrix[0][0][0][1]; //Backward
-    usleep(5000000);
+    // driveDirection = Forward;
+    // usleep(700000);
+    // driveDirection = RightRight;
+    // usleep(700000);
+    // driveDirection = LeftLeft;
+    // usleep(700000);
+    // driveDirection = Backward;
+    // usleep(700000);
+    ninetyDegLeft = true;
+    usleep(1000000);
     haltProgram = true;
     allOff();
     /*******************************END************************/
     pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
-    return (1);
+    return 0;
 }
