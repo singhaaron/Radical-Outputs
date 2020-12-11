@@ -418,12 +418,12 @@ void moveAroundObstacle() {
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
     driveDirection = LeftLeftLeft;
-
-    // TODO: do we need a delay here?
+    delay(1000);
 
     // Rotate right in place until the obstacle is present.
     while (echoSensorDistance() >= DISTANCE_THRESHOLD) {
         driveDirection = RightRightRight;
+        delay(500);
     }
 
     // Soft turn right around the obstacle until we get back to the line.
