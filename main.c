@@ -30,11 +30,11 @@
 #define VOLT_MOT_D 26
 
 // Sensors
-#define ECHO_SENSOR_TRIGGER = 1;
-#define ECHO_SENSOR_RECEIVER = 5;
-#define CLOSE_RANGE_SENSOR = 7;
-#define SERVO_TRIGGER = 25;
-#define DISTANCE_THRESHOLD = 30.0;
+#define ECHO_SENSOR_TRIGGER 21
+#define ECHO_SENSOR_RECEIVER 22
+#define CLOSE_RANGE_SENSOR 7
+#define SERVO_TRIGGER 15
+#define DISTANCE_THRESHOLD 30.0
 
 //Direction
 enum direction
@@ -265,7 +265,7 @@ void *runMotor(void *u)
             softPwmWrite(R_MOT_D, 100);
         }
         //Static Turns
-        else if (ninetyDegLeft)
+        else if (driveDirection == LeftLeftLeft)
         {
             softPwmWrite(VOLT_MOT_A, 25);
             softPwmWrite(VOLT_MOT_B, 75);
@@ -286,7 +286,7 @@ void *runMotor(void *u)
             // softPwmWrite(R_MOT_D, 0);
         }
 
-        else if (ninetyDegRight)
+        else if (driveDirection == RightRightRight)
         {
             // softPwmWrite(F_MOT_A, 0);
             // softPwmWrite(R_MOT_A, 0);
@@ -349,6 +349,51 @@ void *runMotor(void *u)
     return NULL;
 }
 
+float echoSensorDistance() {
+    digitalWrite(ECHO_SENSOR_TRIGGER, HIGH);
+    delay(1);
+    digitalWrite(ECHO_SENSOR_TRIGGER, LOW);
+
+    clock_t start = clock();
+    clock_t stop = clock();
+
+    // As long as the echo pin reads 0, keep resetting the start time.
+    // Once the echo pin reads 1, we got a hit, so we should start the timer
+    // only once the pin switches.
+    while (digitalRead(ECHO_SENSOR_RECEIVER) == 0) {
+        start = clock();
+    }
+
+    while (digitalRead(ECHO_SENSOR_RECEIVER) == 1) {
+        stop = clock();
+    }
+
+    double timeDifference = ((double) (stop - start)) / CLOCKS_PER_SEC;
+    return (((float) timeDifference * 340) / 2) * 100;
+}
+void moveAroundObstacle() {
+    // Turn the echo sensor fully to the right.
+    softPwmWrite(SERVO_TRIGGER, 25);
+    // Hard turn to the left, in place about 90 degrees.
+    // This will depend on how far the servo allows the sensor to rotate.
+    driveDirection = LeftLeftLeft;
+    delay(1000);
+
+    // Rotate right in place until the obstacle is present.
+    while (echoSensorDistance() >= DISTANCE_THRESHOLD) {
+        driveDirection = RightRightRight;
+        delay(500);
+    }
+
+    // // Soft turn right around the obstacle until we get back to the line.
+    // while (offTheLine) { // placeholder variable
+    //     driveDirection = RightRight;
+    // }
+
+    // Center the echo sensor.
+    softPwmWrite(SERVO_TRIGGER, 15);
+}
+
 // Obstacle Sensing
 void checkSensors() {
     int isWaitingForObstacle = 0;
@@ -389,51 +434,6 @@ void checkSensors() {
     pthread_exit(0);
 }
 
-float echoSensorDistance() {
-    digitalWrite(ECHO_SENSOR_TRIGGER, HIGH);
-    delay(1);
-    digitalWrite(ECHO_SENSOR_TRIGGER, LOW);
-
-    clock_t start = clock();
-    clock_t stop = clock();
-
-    // As long as the echo pin reads 0, keep resetting the start time.
-    // Once the echo pin reads 1, we got a hit, so we should start the timer
-    // only once the pin switches.
-    while (digitalRead(ECHO_SENSOR_RECEIVER) == 0) {
-        start = clock();
-    }
-
-    while (digitalRead(ECHO_SENSOR_RECEIVER) == 1) {
-        stop = clock();
-    }
-
-    double timeDifference = ((double) (stop - start)) / CLOCKS_PER_SEC;
-    return (((float) timeDifference * 340) / 2) * 100;
-}
-
-void moveAroundObstacle() {
-    // Turn the echo sensor fully to the right.
-    softPwmWrite(SERVO_TRIGGER, 25);
-    // Hard turn to the left, in place about 90 degrees.
-    // This will depend on how far the servo allows the sensor to rotate.
-    driveDirection = LeftLeftLeft;
-    delay(1000);
-
-    // Rotate right in place until the obstacle is present.
-    while (echoSensorDistance() >= DISTANCE_THRESHOLD) {
-        driveDirection = RightRightRight;
-        delay(500);
-    }
-
-    // Soft turn right around the obstacle until we get back to the line.
-    while (offTheLine) { // placeholder variable
-        driveDirection = RightRight;
-    }
-
-    // Center the echo sensor.
-    softPwmWrite(SERVO_TRIGGER, 15);
-}
 
 int main()
 {
@@ -455,19 +455,20 @@ int main()
     // usleep(700000);
     // driveDirection = Backward;
     // usleep(700000);
-    ninetyDegRight = true;
-    usleep(1000000);
-    haltProgram = true;
-    allOff();
+    // ninetyDegRight = true;
+    // usleep(1000000);
+    // haltProgram = true;
+    // allOff();
     /*******************************END************************/
 
     // Test Obstacle Sensor
     pthread_t obstacleThread;
     haltProgram = false;
     pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
-
+    checkSensors();
     // End Test
 
     pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
+    pthread_join(obstacleThread, NULL);
     return 0;
 }
