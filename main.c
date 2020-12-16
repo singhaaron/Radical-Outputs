@@ -37,6 +37,10 @@
 #define DISTANCE_THRESHOLD 30.0
 
 //Direction
+#define LINE_LEFT_PIN 7
+#define LINE_MIDDLE_PIN 16
+#define LINE_RIGHT_PIN 1
+#define LINE_BOTTOM_PIN 8
 enum direction
 {
     None,
@@ -173,6 +177,7 @@ void *runMotor(void *u)
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1s
             //Sharper Left
+            printf("Should be driving left!\n");
             softPwmWrite(VOLT_MOT_A, 30);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 30);
@@ -203,6 +208,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1s
+            printf("Should be driving Right!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 30);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -221,6 +227,7 @@ void *runMotor(void *u)
         else if (driveDirection == Forward)
         {
             //All Motors Charge Forward
+            printf("Should be driving Forward!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -251,6 +258,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             //All Motors Charge Backward
+            printf("Should be driving Backwards!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -267,6 +275,7 @@ void *runMotor(void *u)
         //Static Turns
         else if (driveDirection == LeftLeftLeft)
         {
+            printf("Should be driving LEEEEFT!\n");
             softPwmWrite(VOLT_MOT_A, 25);
             softPwmWrite(VOLT_MOT_B, 75);
             softPwmWrite(VOLT_MOT_C, 50);
@@ -297,6 +306,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1sec
+            printf("Should be driving RIIIIIGHHT!\n");
             softPwmWrite(VOLT_MOT_A, 75);
             softPwmWrite(VOLT_MOT_B, 25);
             softPwmWrite(VOLT_MOT_C, 75);
@@ -326,6 +336,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1sec
+            printf("AAHHHHH I DON't KNOW WHAT IM DOING!!\n");
             softPwmWrite(VOLT_MOT_A, 100);
             softPwmWrite(VOLT_MOT_B, 100);
             softPwmWrite(VOLT_MOT_C, 100);
@@ -372,7 +383,7 @@ float echoSensorDistance() {
     return (((float) timeDifference * 340) / 2) * 100;
 }
 void moveAroundObstacle() {
-    // Turn the echo sensor fully to the right.
+    // Turn the echo sensor fully to the left.
     softPwmWrite(SERVO_TRIGGER, 25);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
@@ -434,7 +445,27 @@ void checkSensors() {
     pthread_exit(0);
 }
 
+bool isRunning = true;
+void* lineSensorThread(void* arg) {
+  while( isRunning ) {
+    driveDirection = lineMatrix
+                          [digitalRead(LINE_LEFT_PIN)]
+                          [digitalRead(LINE_MIDDLE_PIN)]
+                          [digitalRead(LINE_RIGHT_PIN)]
+                          [digitalRead(LINE_BOTTOM_PIN)];
+  }
+  return NULL;
+}
 
+pthread_t lineSensorPID;
+void startLineSensorThread() {
+  pthread_create( &lineSensorPID, NULL, lineSensorThread, NULL );
+}
+
+void stopLineSensorThread() {
+  isRunning = false;
+  pthread_join( lineSensorPID,  NULL );
+} 
 int main()
 {
     signal(SIGINT, interruptHandlers);
@@ -446,6 +477,7 @@ int main()
     setup();
     pthread_t MotorThread;
     pthread_create(&MotorThread, NULL, &runMotor, NULL);
+    startLineSensorThread();
     /*******************************Test************************/
     // driveDirection = Forward;
     // usleep(700000);
@@ -463,12 +495,13 @@ int main()
 
     // Test Obstacle Sensor
     pthread_t obstacleThread;
-    haltProgram = false;
-    pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
-    checkSensors();
+    // haltProgram = false;
+    // pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
+    // checkSensors();
+    pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
+    // pthread_join(obstacleThread, NULL);
+    stopLineSensorThread();
     // End Test
 
-    pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
-    pthread_join(obstacleThread, NULL);
     return 0;
 }
