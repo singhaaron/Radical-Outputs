@@ -10,7 +10,11 @@
 #include <signal.h>   //Interupt
 #include <wiringPi.h> //Pins
 #include <softPwm.h>  //Power Output
+//white vcc
+//purple gnd
 
+//yellow vcc
+//
 //Motor Macros
 //MOTOR-1
 #define F_MOT_A 3
@@ -56,7 +60,7 @@ enum direction
 //Matrix constants
 #define _ 0
 #define L 1
-#define M 1
+#define M 0
 #define R 1
 #define B 1
 #define LEFT 2
@@ -132,6 +136,12 @@ static void setup()
     pullUpDnControl(SERVO_TRIGGER, PUD_OFF);
     softPwmCreate(SERVO_TRIGGER, 0, 50);
     softPwmWrite(SERVO_TRIGGER, 15);
+
+    // Line sensor
+    pinMode(LINE_LEFT_PIN, INPUT);
+    pinMode(LINE_MIDDLE_PIN, INPUT);
+    pinMode(LINE_RIGHT_PIN, INPUT);
+    pinMode(LINE_BOTTOM_PIN, INPUT);
 }
 
 static void allOff()
@@ -177,7 +187,7 @@ void *runMotor(void *u)
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1s
             //Sharper Left
-            printf("Should be driving left!\n");
+            // printf("Should be driving left!\n");
             softPwmWrite(VOLT_MOT_A, 30);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 30);
@@ -192,6 +202,21 @@ void *runMotor(void *u)
             softPwmWrite(R_MOT_D, 0);
             // usleep(1000000);                         //1S
             // driveDirection = lineMatrix[0][1][0][0]; //Set Back to Forward
+        }
+        else if (driveDirection == None){
+            // printf("Should be driving... NOT!\n");
+            softPwmWrite(VOLT_MOT_A, 0);
+            softPwmWrite(VOLT_MOT_B, 0);
+            softPwmWrite(VOLT_MOT_C, 0);
+            softPwmWrite(VOLT_MOT_D, 0);
+            softPwmWrite(F_MOT_A, 0);
+            softPwmWrite(R_MOT_A, 0);
+            softPwmWrite(F_MOT_B, 0);
+            softPwmWrite(R_MOT_B, 0);
+            softPwmWrite(F_MOT_C, 0);
+            softPwmWrite(R_MOT_C, 0);
+            softPwmWrite(F_MOT_D, 0);
+            softPwmWrite(R_MOT_D, 0);
         }
         else if (driveDirection == RightRight)
         {
@@ -208,7 +233,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1s
-            printf("Should be driving Right!\n");
+            // printf("Should be driving Right!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 30);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -227,7 +252,7 @@ void *runMotor(void *u)
         else if (driveDirection == Forward)
         {
             //All Motors Charge Forward
-            printf("Should be driving Forward!\n");
+            // printf("Should be driving Forward!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -258,7 +283,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             //All Motors Charge Backward
-            printf("Should be driving Backwards!\n");
+            // printf("Should be driving Backwards!\n");
             softPwmWrite(VOLT_MOT_A, 60);
             softPwmWrite(VOLT_MOT_B, 60);
             softPwmWrite(VOLT_MOT_C, 60);
@@ -275,7 +300,7 @@ void *runMotor(void *u)
         //Static Turns
         else if (driveDirection == LeftLeftLeft)
         {
-            printf("Should be driving LEEEEFT!\n");
+            // printf("Should be driving LEEEEFT!\n");
             softPwmWrite(VOLT_MOT_A, 25);
             softPwmWrite(VOLT_MOT_B, 75);
             softPwmWrite(VOLT_MOT_C, 50);
@@ -306,7 +331,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1sec
-            printf("Should be driving RIIIIIGHHT!\n");
+            // printf("Should be driving RIIIIIGHHT!\n");
             softPwmWrite(VOLT_MOT_A, 75);
             softPwmWrite(VOLT_MOT_B, 25);
             softPwmWrite(VOLT_MOT_C, 75);
@@ -336,7 +361,7 @@ void *runMotor(void *u)
             // softPwmWrite(F_MOT_D, 0);
             // softPwmWrite(R_MOT_D, 0);
             // usleep(1000000); //1sec
-            printf("AAHHHHH I DON't KNOW WHAT IM DOING!!\n");
+            // printf("AAHHHHH I DON't KNOW WHAT IM DOING!!\n");
             softPwmWrite(VOLT_MOT_A, 100);
             softPwmWrite(VOLT_MOT_B, 100);
             softPwmWrite(VOLT_MOT_C, 100);
