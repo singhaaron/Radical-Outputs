@@ -394,11 +394,15 @@ void moveAroundObstacle() {
     softPwmWrite(SERVO_TRIGGER, 15);
 }
 
-void checkSensors() {
+void* checkSensors() {
+    // printf("check sensors");
+    // fflush(stdout);
     while (!haltProgram) {
-        pthread_mutex_lock(&obstacleMutex);
+        // pthread_mutex_lock(&obstacleMutex);
         if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
             isBlockedByObstacle = true;
+            printf("obstacle\r");
+            fflush(stdout);
             lineControl = false;
             // Wait 5 seconds to check if the obstacle has moved.
             if (!haveWaitedForObstacle) {
@@ -413,14 +417,14 @@ void checkSensors() {
             haveWaitedForObstacle = false;
             lineControl = true;
         }
-        pthread_mutex_unlock(&obstacleMutex);
+        // pthread_mutex_unlock(&obstacleMutex);
     }
     pthread_exit(0);
 }
 
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
-  pthread_mutex_lock(&obstacleMutex);
+//   pthread_mutex_lock(&obstacleMutex);
   enum direction lineDirectionTemp;
   while( isRunning ) {
     lineDirectionTemp = lineMatrix
@@ -445,7 +449,7 @@ void* lineSensorThread(void* arg) {
     // fflush(stdout);
   }
 
-  pthread_mutex_unlock(&obstacleMutex);
+//   pthread_mutex_unlock(&obstacleMutex);
   return NULL;
 }
 
@@ -462,13 +466,13 @@ void stopLineSensorThread() {
 void lineORobstacle() {
     while(!haltProgram) {
         if(!lineControl) {
-            printf("\r1");
-            fflush(stdout);
+            // printf("\r1");
+            // fflush(stdout);
             driveDirection = obstacleDirection;
         }
         else {
-            printf("\r0");
-            fflush(stdout);
+            // printf("\r0");
+            // fflush(stdout);
             driveDirection = lineDirection;
         }
     }
@@ -590,10 +594,9 @@ int main()
     startLineSensorThread();
     // // Test Obstacle Sensor
     pthread_t obstacleThread;
-    pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
+    pthread_create(&obstacleThread, NULL, checkSensors, NULL);
     pthread_t lineORobstacleThread;
     pthread_create(&lineORobstacleThread, NULL, lineORobstacle, NULL);
-    checkSensors();
     pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
     pthread_join(obstacleThread, NULL);
     pthread_join(lineORobstacleThread, NULL);
