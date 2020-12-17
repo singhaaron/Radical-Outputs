@@ -96,6 +96,7 @@ enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
 bool haltProgram = false;                                  //Terminate All
 enum direction lineDirection;                             //Drive Direction
 enum direction obstacleDirection;
+enum direction driveDirection;
 bool isOffline = false;
 bool ninetyDegLeft, ninetyDegRight, threesixtyDeg = false; //Static Turns
 bool isBlockedByObstacle = false;                          //Obstacle Blocking
@@ -372,6 +373,7 @@ float echoSensorDistance() {
 
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
+    printf("im in move around obst!\n");
     softPwmWrite(SERVO_TRIGGER, 25);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
@@ -420,6 +422,7 @@ void checkSensors() {
 pthread_mutex_t trapS = PTHREAD_MUTEX_INITIALIZER;
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
+    printf("im in linesensor thread!\n");
   pthread_mutex_lock(&trapS);
   enum direction lineDirectionTemp;
   while( isRunning ) {
@@ -431,18 +434,18 @@ void* lineSensorThread(void* arg) {
     if (lineDirectionTemp == Repeat){
     }
     else if(lineDirectionTemp == Offline) {
-        lineDirection = Backward
+        lineDirection = Backward;
         isOffline = false;
     }
     else{
         lineDirection = lineDirectionTemp;
         isOffline = true;
     }
-      printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
-                          digitalRead(LINE_MIDDLE_PIN),
-                          digitalRead(LINE_RIGHT_PIN),
-                          digitalRead(LINE_BOTTOM_PIN));
-    fflush(stdout);
+    //   printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
+    //                       digitalRead(LINE_MIDDLE_PIN),
+    //                       digitalRead(LINE_RIGHT_PIN),
+    //                       digitalRead(LINE_BOTTOM_PIN));
+    // fflush(stdout);
   }
 
   pthread_mutex_unlock(&trapS);
@@ -588,11 +591,11 @@ int main()
     pthread_t obstacleThread;
     pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
     pthread_t lineORobstacleThread;
-    pthread_create(&lineORobstacleThread, NULL, lineORobstacle, NULL)
+    pthread_create(&lineORobstacleThread, NULL, lineORobstacle, NULL);
     checkSensors();
     pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
     pthread_join(obstacleThread, NULL);
-    pthread_join()
+    pthread_join(lineORobstacleThread, NULL);
     stopLineSensorThread();
     // haltProgram = false;
     // End Test
