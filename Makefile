@@ -1,3 +1,4 @@
-makeBuild:
-	gcc main.c -o execMain -l wiringPi -lpthread
+mb:
+	gcc main.c -o execMain -l wiringPi -lpthread -lncurses
+	sudo ./execMain
 
