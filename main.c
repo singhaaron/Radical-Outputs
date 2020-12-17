@@ -11,6 +11,7 @@
 #include <wiringPi.h> //Pins
 #include <softPwm.h>  //Power Output
 #include <ncurses.h> //KeyPress Library
+#include <math.h>
 
 //white vcc
 //purple gnd
