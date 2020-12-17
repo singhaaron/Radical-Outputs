@@ -375,6 +375,18 @@ float echoSensorDistance() {
     return objectDistance;
 }
 
+void delayWithCheck(int delayAmount, int delayIncrement, bool flag, bool breakIfIm) {
+    int steps = delayAmount / delayIncrement;
+    for( int i = 0; i <= steps; i++) {
+        if(flag == breakIfIm) {
+            break;
+        }
+        else {
+            delay(delayIncrement);
+        }
+    }
+}
+
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
     // Hard turn to the left, in place about 90 degrees.
@@ -402,19 +414,19 @@ void moveAroundObstacle() {
         softPwmWrite(SERVO_TRIGGER, i);
         delay(100);
     }
-    while(isOffline) {
+    while(true) {
         obstacleDirection = Forward;
-        delay(1500);
+        delayWithCheck(1500, 50, isOffline, false);
         obstacleDirection = None;
-        delay(1000);
+        delayWithCheck(1000, 50, isOffline, false);
         obstacleDirection = RightRight;
-        delay(500);
+        delayWithCheck(500, 50, isOffline, false);
         obstacleDirection = None;
-        delay(1000);
+        delayWithCheck(1000, 50, isOffline, false);
         obstacleDirection = Forward;
-        delay(1500);
+        delayWithCheck(1500, 50, isOffline, false);
         obstacleDirection = None;
-        delay(1000);
+        delayWithCheck(1000, 50, isOffline, false);
     }
     // pthread_mutex_unlock(&obstacleMutex);
     // Center the echo sensor.
