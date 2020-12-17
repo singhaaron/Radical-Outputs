@@ -5,3 +5,8 @@
 CMakeLists.txt
 
 .vscode
+
+wiringPi.c
+wiringPi.h
+softPwm.c
+softPwm.h
