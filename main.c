@@ -398,12 +398,13 @@ void* checkSensors() {
     // printf("check sensors");
     // fflush(stdout);
     while (!haltProgram) {
-        // pthread_mutex_lock(&obstacleMutex);
+        pthread_mutex_lock(&obstacleMutex);
         if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
             isBlockedByObstacle = true;
             printf("\robstacle");
             fflush(stdout);
             lineControl = false;
+            obstacleDirection = None;
             // Wait 5 seconds to check if the obstacle has moved.
             if (!haveWaitedForObstacle) {
                 printf("\rwait     ");
@@ -421,16 +422,16 @@ void* checkSensors() {
             haveWaitedForObstacle = false;
             lineControl = true;
         }
-        // pthread_mutex_unlock(&obstacleMutex);
+        pthread_mutex_unlock(&obstacleMutex);
     }
     pthread_exit(0);
 }
 
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
-//   pthread_mutex_lock(&obstacleMutex);
   enum direction lineDirectionTemp;
   while( isRunning ) {
+        pthread_mutex_lock(&obstacleMutex);
     lineDirectionTemp = lineMatrix
                           [digitalRead(LINE_LEFT_PIN)]
                           [digitalRead(LINE_MIDDLE_PIN)]
@@ -446,14 +447,13 @@ void* lineSensorThread(void* arg) {
         lineDirection = lineDirectionTemp;
         isOffline = true;
     }
+      pthread_mutex_unlock(&obstacleMutex);
     //   printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
     //                       digitalRead(LINE_MIDDLE_PIN),
     //                       digitalRead(LINE_RIGHT_PIN),
     //                       digitalRead(LINE_BOTTOM_PIN));
     // fflush(stdout);
   }
-
-//   pthread_mutex_unlock(&obstacleMutex);
   return NULL;
 }
 
