@@ -41,7 +41,7 @@
 #define ECHO_SENSOR_RECEIVER 22
 #define CLOSE_RANGE_SENSOR 7
 #define SERVO_TRIGGER 15
-#define DISTANCE_THRESHOLD 5.0
+#define DISTANCE_THRESHOLD 15.0
 
 //Direction
 #define LINE_LEFT_PIN 7
@@ -74,7 +74,7 @@ enum direction
 #define BOTTOM 2
 
 enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
-    [_][_][_][_] = None,            // 0
+    [_][_][_][_] = Offline,            // 0
     [L][_][R][_] = Forward,            // 6
     [L][M][R][_] = Repeat,            //11
     [L][_][R][B] = Repeat,            //13
@@ -184,9 +184,9 @@ void *runMotor(void *u)
         {
             // printf("Should be driving left!\n");
             softPwmWrite(VOLT_MOT_A, 30);
-            softPwmWrite(VOLT_MOT_B, 70);
+            softPwmWrite(VOLT_MOT_B, 30);
             softPwmWrite(VOLT_MOT_C, 30);
-            softPwmWrite(VOLT_MOT_D, 70);
+            softPwmWrite(VOLT_MOT_D, 30);
             softPwmWrite(F_MOT_A, 0);
             softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 100);
@@ -199,10 +199,10 @@ void *runMotor(void *u)
         else if (driveDirection == LeftLeft)
         {
             // printf("Should be driving leftleft!\n");
-            softPwmWrite(VOLT_MOT_A, 30);
-            softPwmWrite(VOLT_MOT_B, 90);
-            softPwmWrite(VOLT_MOT_C, 30);
-            softPwmWrite(VOLT_MOT_D, 90);
+            softPwmWrite(VOLT_MOT_A, 60);
+            softPwmWrite(VOLT_MOT_B, 60);
+            softPwmWrite(VOLT_MOT_C, 60);
+            softPwmWrite(VOLT_MOT_D, 60);
             softPwmWrite(F_MOT_A, 0);
             softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 100);
@@ -230,9 +230,9 @@ void *runMotor(void *u)
         else if (driveDirection == Right)
         {
             // printf("Should be driving Right!\n");
-            softPwmWrite(VOLT_MOT_A, 70);
+            softPwmWrite(VOLT_MOT_A, 30);
             softPwmWrite(VOLT_MOT_B, 30);
-            softPwmWrite(VOLT_MOT_C, 70);
+            softPwmWrite(VOLT_MOT_C, 30);
             softPwmWrite(VOLT_MOT_D, 30);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
@@ -246,10 +246,10 @@ void *runMotor(void *u)
         else if (driveDirection == RightRight)
         {
             // printf("Should be driving Right!\n");
-            softPwmWrite(VOLT_MOT_A, 70);
-            softPwmWrite(VOLT_MOT_B, 30);
-            softPwmWrite(VOLT_MOT_C, 70);
-            softPwmWrite(VOLT_MOT_D, 30);
+            softPwmWrite(VOLT_MOT_A, 60);
+            softPwmWrite(VOLT_MOT_B, 60);
+            softPwmWrite(VOLT_MOT_C, 60);
+            softPwmWrite(VOLT_MOT_D, 60);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
             softPwmWrite(F_MOT_B, 0);
@@ -373,22 +373,31 @@ float echoSensorDistance() {
 
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
-    softPwmWrite(SERVO_TRIGGER, 5);
+    for(int i = 10; i >= 5; i--){
+        softPwmWrite(SERVO_TRIGGER, i);
+        delay(100);
+    }
+    obstacleDirection = Left;
+    delay(500);
+    obstacleDirection = None;
+    delay(1000);
+    obstacleDirection = Forward;
+    delay(500);
+    obstacleDirection = Right;
+    delay(500);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
-    obstacleDirection = LeftLeftLeft;
-    delay(5000);
 
     // Turning around the obstacle until we get back to the line
     do {
         // Turn softly
         if (echoSensorDistance() < DISTANCE_THRESHOLD) {
-            obstacleDirection = Right;
+            obstacleDirection = Forward;
         } else {
             // Lost sight of the obstacle, so turn a little harder
             obstacleDirection = RightRight;
         }
-        delay(500);
+        delay(0);
     } while (isOffline);
     // Center the echo sensor.
     softPwmWrite(SERVO_TRIGGER, 15);
@@ -440,7 +449,7 @@ void* lineSensorThread(void* arg) {
     if (lineDirectionTemp == Repeat){
     }
     else if(lineDirectionTemp == Offline) {
-        lineDirection = Backward;
+        lineDirection = None;
         isOffline = false;
     }
     else{
