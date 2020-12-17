@@ -371,6 +371,7 @@ float echoSensorDistance() {
     double timeDifference = ((double) (stop - start)) / CLOCKS_PER_SEC;
     objectDistance = (((float) timeDifference * 340) / 2) * 100;
     printf("\rObject distance = %f", objectDistance);
+    fflush(stdout);
     return objectDistance;
 }
 
