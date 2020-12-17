@@ -382,7 +382,7 @@ void moveAroundObstacle() {
         [digitalRead(LINE_MIDDLE_PIN)]
         [digitalRead(LINE_RIGHT_PIN)]
         [digitalRead(LINE_BOTTOM_PIN)] != None) {
-            isOffline = false
+            isOffline = false;
         }
         // Turn softly
         if (echoSensorDistance() < DISTANCE_THRESHOLD) {
@@ -392,8 +392,7 @@ void moveAroundObstacle() {
             driveDirection = RightRight;
         }
         delay(500);
-    } while (isOffline)
-
+    } while (isOffline);
     // Center the echo sensor.
     softPwmWrite(SERVO_TRIGGER, 15);
 }
