@@ -58,7 +58,8 @@ enum direction
     LeftLeftLeft,
     Right,
     RightRight,
-    RightRightRight
+    RightRightRight,
+    Repeat
 };
 //Matrix constants
 #define _ 1
@@ -73,19 +74,19 @@ enum direction
 
 enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
     [_][_][_][_] = None,            // 0
-    [L][_][R][_] = None,            // 6
-    [L][M][R][_] = None,            //11
-    [L][_][R][B] = None,            //13
+    [L][_][R][_] = Forward,            // 6
+    [L][M][R][_] = Repeat,            //11
+    [L][_][R][B] = Repeat,            //13
     [_][M][_][_] = Forward,         // 2
     [_][M][_][B] = Forward,         // 9
     [L][M][R][B] = Forward,         //15
     [_][_][_][B] = Backward,        // 4
     [L][_][_][_] = Left,            // 1
     [L][_][_][B] = LeftLeft,        // 7
-    [_][M][R][_] = LeftLeft,        // 8
+    [_][M][R][_] = RightRight,        // 8
     [L][M][_][B] = LeftLeftLeft,    //12
     [_][_][R][_] = Right,           // 3
-    [L][M][_][_] = RightRight,      // 5
+    [L][M][_][_] = LeftLeft,      // 5
     [_][_][R][B] = RightRight,      //10
     [_][M][R][B] = RightRightRight, //14
 };
@@ -182,12 +183,12 @@ void *runMotor(void *u)
             softPwmWrite(VOLT_MOT_B, 70);
             softPwmWrite(VOLT_MOT_C, 30);
             softPwmWrite(VOLT_MOT_D, 70);
-            softPwmWrite(F_MOT_A, 100);
-            softPwmWrite(R_MOT_A, 0);
+            softPwmWrite(F_MOT_A, 0);
+            softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 100);
             softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 100);
-            softPwmWrite(R_MOT_C, 0);
+            softPwmWrite(F_MOT_C, 0);
+            softPwmWrite(R_MOT_C, 100);
             softPwmWrite(F_MOT_D, 100);
             softPwmWrite(R_MOT_D, 0);
         }
@@ -198,12 +199,12 @@ void *runMotor(void *u)
             softPwmWrite(VOLT_MOT_B, 90);
             softPwmWrite(VOLT_MOT_C, 30);
             softPwmWrite(VOLT_MOT_D, 90);
-            softPwmWrite(F_MOT_A, 100);
-            softPwmWrite(R_MOT_A, 0);
+            softPwmWrite(F_MOT_A, 0);
+            softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 100);
             softPwmWrite(R_MOT_B, 0);
-            softPwmWrite(F_MOT_C, 100);
-            softPwmWrite(R_MOT_C, 0);
+            softPwmWrite(F_MOT_C, 0);
+            softPwmWrite(R_MOT_C, 100);
             softPwmWrite(F_MOT_D, 100);
             softPwmWrite(R_MOT_D, 0);
         }
@@ -231,12 +232,12 @@ void *runMotor(void *u)
             softPwmWrite(VOLT_MOT_D, 30);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 100);
-            softPwmWrite(R_MOT_B, 0);
+            softPwmWrite(F_MOT_B, 0);
+            softPwmWrite(R_MOT_B, 100);
             softPwmWrite(F_MOT_C, 100);
             softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 100);
-            softPwmWrite(R_MOT_D, 0);
+            softPwmWrite(F_MOT_D, 0);
+            softPwmWrite(R_MOT_D, 100);
         }
         else if (driveDirection == RightRight)
         {
@@ -247,21 +248,21 @@ void *runMotor(void *u)
             softPwmWrite(VOLT_MOT_D, 30);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
-            softPwmWrite(F_MOT_B, 100);
-            softPwmWrite(R_MOT_B, 0);
+            softPwmWrite(F_MOT_B, 0);
+            softPwmWrite(R_MOT_B, 100);
             softPwmWrite(F_MOT_C, 100);
             softPwmWrite(R_MOT_C, 0);
-            softPwmWrite(F_MOT_D, 100);
-            softPwmWrite(R_MOT_D, 0);
+            softPwmWrite(F_MOT_D, 0);
+            softPwmWrite(R_MOT_D, 100);
         }
         else if (driveDirection == Forward)
         {
             //All Motors Charge Forward
             // printf("Should be driving Forward!\n");
-            softPwmWrite(VOLT_MOT_A, 60);
-            softPwmWrite(VOLT_MOT_B, 60);
-            softPwmWrite(VOLT_MOT_C, 60);
-            softPwmWrite(VOLT_MOT_D, 60);
+            softPwmWrite(VOLT_MOT_A, 20);
+            softPwmWrite(VOLT_MOT_B, 20);
+            softPwmWrite(VOLT_MOT_C, 20);
+            softPwmWrite(VOLT_MOT_D, 20);
             softPwmWrite(F_MOT_A, 100);
             softPwmWrite(R_MOT_A, 0);
             softPwmWrite(F_MOT_B, 100);
@@ -296,9 +297,9 @@ void *runMotor(void *u)
             softPwmWrite(VOLT_MOT_B, 75);
             softPwmWrite(VOLT_MOT_C, 50);
             softPwmWrite(VOLT_MOT_D, 75);
-            softPwmWrite(F_MOT_A, 10);
+            softPwmWrite(R_MOT_A, 10);
             softPwmWrite(F_MOT_B, 75);
-            softPwmWrite(F_MOT_C, 25);
+            softPwmWrite(R_MOT_C, 25);
             softPwmWrite(F_MOT_D, 75);
 
         }
@@ -307,13 +308,13 @@ void *runMotor(void *u)
         {
             // printf("Should be driving RIIIIIGHHT!\n");
             softPwmWrite(VOLT_MOT_A, 75);
-            softPwmWrite(VOLT_MOT_B, 25);
+            softPwmWrite(VOLT_MOT_B, 10);
             softPwmWrite(VOLT_MOT_C, 75);
-            softPwmWrite(VOLT_MOT_D, 50);
+            softPwmWrite(VOLT_MOT_D, 10);
             softPwmWrite(F_MOT_A, 75);
-            softPwmWrite(F_MOT_B, 10);
+            softPwmWrite(R_MOT_B, 25);
             softPwmWrite(F_MOT_C, 75);
-            softPwmWrite(F_MOT_D, 25);
+            softPwmWrite(R_MOT_D, 50);
         }
         else if (threesixtyDeg)
         {
@@ -425,12 +426,19 @@ pthread_mutex_t trapS = PTHREAD_MUTEX_INITIALIZER;
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
   pthread_mutex_lock(&trapS);
+  enum direction driveDirectionTemp;
   while( isRunning ) {
-    driveDirection = lineMatrix
+    driveDirectionTemp = lineMatrix
                           [digitalRead(LINE_LEFT_PIN)]
                           [digitalRead(LINE_MIDDLE_PIN)]
                           [digitalRead(LINE_RIGHT_PIN)]
                           [digitalRead(LINE_BOTTOM_PIN)];
+    if (driveDirectionTemp == Repeat){
+
+    }
+    else{
+        driveDirection = driveDirectionTemp;
+    }
       printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
                           digitalRead(LINE_MIDDLE_PIN),
                           digitalRead(LINE_RIGHT_PIN),
