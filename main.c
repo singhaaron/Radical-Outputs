@@ -406,11 +406,11 @@ void moveAroundObstacle() {
     obstacleDirection = None;
     delay(1000);
     obstacleDirection = Forward;
-    delay(1500);
+    delay(1750);
     obstacleDirection = None;
     delay(1000);
     obstacleDirection = RightRight;
-    delay(500);
+    delay(450);
     obstacleDirection = None;
     delay(1000);
     for(int i = 5; i <= 13; i++){
@@ -419,7 +419,7 @@ void moveAroundObstacle() {
     }
     while(true) {
         obstacleDirection = Forward;
-        if(delayWithCheck(1500, 50, isOffline, false)){
+        if(delayWithCheck(2000, 50, isOffline, false)){
             break;
         }
         obstacleDirection = None;
@@ -427,7 +427,7 @@ void moveAroundObstacle() {
             break;
         }
         obstacleDirection = RightRight;
-        if(delayWithCheck(500, 50, isOffline, false)){
+        if(delayWithCheck(450, 50, isOffline, false)){
             break;
         }
         obstacleDirection = None;
@@ -435,7 +435,7 @@ void moveAroundObstacle() {
             break;
         }
         obstacleDirection = Forward;
-        if(delayWithCheck(1500, 50, isOffline, false)){
+        if(delayWithCheck(1600, 50, isOffline, false)){
             break;
         }
         obstacleDirection = None;
@@ -471,6 +471,8 @@ void* checkSensors(void* args) {
                 fflush(stdout);
                 moveAroundObstacle();
                 lineControl = true;
+                isBlockedByObstacle = false;
+                haveWaitedForObstacle = false;
                 printf("giving control back to line control\n");
                 fflush(stdout);
             }
@@ -488,7 +490,7 @@ bool isRunning = true;
 void* lineSensorThread(void* arg) {
   enum direction lineDirectionTemp;
   while( isRunning ) {
-    pthread_mutex_lock(&obstacleMutex);
+    // pthread_mutex_lock(&obstacleMutex);
     lineDirectionTemp = lineMatrix
                           [digitalRead(LINE_LEFT_PIN)]
                           [digitalRead(LINE_MIDDLE_PIN)]
@@ -504,7 +506,7 @@ void* lineSensorThread(void* arg) {
         lineDirection = lineDirectionTemp;
         isOffline = false;
     }
-    pthread_mutex_unlock(&obstacleMutex);
+    // pthread_mutex_unlock(&obstacleMutex);
     //   printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
     //                       digitalRead(LINE_MIDDLE_PIN),
     //                       digitalRead(LINE_RIGHT_PIN),
