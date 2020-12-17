@@ -373,7 +373,7 @@ float echoSensorDistance() {
 
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
-    softPwmWrite(SERVO_TRIGGER, 25);
+    softPwmWrite(SERVO_TRIGGER, 5);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
     obstacleDirection = LeftLeftLeft;
@@ -401,14 +401,18 @@ void* checkSensors() {
         // pthread_mutex_lock(&obstacleMutex);
         if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
             isBlockedByObstacle = true;
-            printf("obstacle\r");
+            printf("\robstacle");
             fflush(stdout);
             lineControl = false;
             // Wait 5 seconds to check if the obstacle has moved.
             if (!haveWaitedForObstacle) {
-                delay(10000);
+                printf("\rwait     ");
+                fflush(stdout);
+                delay(1000);
                 haveWaitedForObstacle = true;
             } else {
+                printf("\rGo     ");
+                fflush(stdout);
                 moveAroundObstacle();
                 lineControl = true;
             }
