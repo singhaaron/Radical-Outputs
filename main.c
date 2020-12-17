@@ -41,7 +41,7 @@
 #define ECHO_SENSOR_RECEIVER 22
 #define CLOSE_RANGE_SENSOR 7
 #define SERVO_TRIGGER 15
-#define DISTANCE_THRESHOLD 30.0
+#define DISTANCE_THRESHOLD 5.0
 
 //Direction
 #define LINE_LEFT_PIN 7
@@ -74,7 +74,7 @@ enum direction
 #define BOTTOM 2
 
 enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
-    [_][_][_][_] = Offline,            // 0
+    [_][_][_][_] = None,            // 0
     [L][_][R][_] = Forward,            // 6
     [L][M][R][_] = Repeat,            //11
     [L][_][R][B] = Repeat,            //13
@@ -280,10 +280,10 @@ void *runMotor(void *u)
         {
             //All Motors Charge Backward
             // printf("Should be driving Backwards!\n");
-            softPwmWrite(VOLT_MOT_A, 60);
-            softPwmWrite(VOLT_MOT_B, 60);
-            softPwmWrite(VOLT_MOT_C, 60);
-            softPwmWrite(VOLT_MOT_D, 60);
+            softPwmWrite(VOLT_MOT_A, 20);
+            softPwmWrite(VOLT_MOT_B, 20);
+            softPwmWrite(VOLT_MOT_C, 20);
+            softPwmWrite(VOLT_MOT_D, 20);
             softPwmWrite(F_MOT_A, 0);
             softPwmWrite(R_MOT_A, 100);
             softPwmWrite(F_MOT_B, 0);
@@ -373,12 +373,11 @@ float echoSensorDistance() {
 
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
-    printf("im in move around obst!\n");
     softPwmWrite(SERVO_TRIGGER, 25);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
     obstacleDirection = LeftLeftLeft;
-    delay(1000);
+    delay(5000);
 
     // Turning around the obstacle until we get back to the line
     do {
@@ -403,7 +402,7 @@ void checkSensors() {
             lineControl = false;
             // Wait 5 seconds to check if the obstacle has moved.
             if (!haveWaitedForObstacle) {
-                delay(5000);
+                delay(10000);
                 haveWaitedForObstacle = true;
             } else {
                 moveAroundObstacle();
@@ -419,11 +418,9 @@ void checkSensors() {
     pthread_exit(0);
 }
 
-pthread_mutex_t trapS = PTHREAD_MUTEX_INITIALIZER;
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
-    printf("im in linesensor thread!\n");
-  pthread_mutex_lock(&trapS);
+  pthread_mutex_lock(&obstacleMutex);
   enum direction lineDirectionTemp;
   while( isRunning ) {
     lineDirectionTemp = lineMatrix
@@ -448,7 +445,7 @@ void* lineSensorThread(void* arg) {
     // fflush(stdout);
   }
 
-  pthread_mutex_unlock(&trapS);
+  pthread_mutex_unlock(&obstacleMutex);
   return NULL;
 }
 
@@ -464,10 +461,14 @@ void stopLineSensorThread() {
 
 void lineORobstacle() {
     while(!haltProgram) {
-        if(isBlockedByObstacle) {
+        if(!lineControl) {
+            printf("\r1");
+            fflush(stdout);
             driveDirection = obstacleDirection;
         }
         else {
+            printf("\r0");
+            fflush(stdout);
             driveDirection = lineDirection;
         }
     }
