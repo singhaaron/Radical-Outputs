@@ -94,7 +94,8 @@ bool haltProgram = false;                                  //Terminate All
 enum direction driveDirection;                             //Drive Direction
 bool ninetyDegLeft, ninetyDegRight, threesixtyDeg = false; //Static Turns
 bool isBlockedByObstacle = false;                          //Obstacle Blocking
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;         //Threading
+bool haveWaitedForObstacle = false;                        //Obstacle Sensing
+bool lineControl = true;                                   //Line Sensing
 
 //Wiring Pi Starter
 static void setup()
@@ -307,6 +308,8 @@ void *runMotor(void *u)
     return NULL;
 }
 
+// Obstacle Sensing
+pthread_mutex_t obstacleMutex = PTHREAD_MUTEX_INITIALIZER;
 float echoSensorDistance() {
     digitalWrite(ECHO_SENSOR_TRIGGER, HIGH);
     delay(1);
@@ -329,6 +332,7 @@ float echoSensorDistance() {
     double timeDifference = ((double) (stop - start)) / CLOCKS_PER_SEC;
     return (((float) timeDifference * 340) / 2) * 100;
 }
+
 void moveAroundObstacle() {
     // Turn the echo sensor fully to the left.
     softPwmWrite(SERVO_TRIGGER, 25);
@@ -337,70 +341,66 @@ void moveAroundObstacle() {
     driveDirection = LeftLeftLeft;
     delay(1000);
 
-    // Rotate right in place until the obstacle is present.
-    while (echoSensorDistance() >= DISTANCE_THRESHOLD) {
-        driveDirection = RightRightRight;
+    // Turning around the obstacle until we get back to the line
+    bool isOffline = true;
+    do {
+        if (lineMatrix
+        [digitalRead(LINE_LEFT_PIN)]
+        [digitalRead(LINE_MIDDLE_PIN)]
+        [digitalRead(LINE_RIGHT_PIN)]
+        [digitalRead(LINE_BOTTOM_PIN)] != None) {
+            isOffline = false
+        }
+        // Turn softly
+        if (echoSensorDistance() < DISTANCE_THRESHOLD) {
+            driveDirection = Right;
+        } else {
+            // Lost sight of the obstacle, so turn a little harder
+            driveDirection = RightRight;
+        }
         delay(500);
-    }
-
-    // // Soft turn right around the obstacle until we get back to the line.
-    // while (offTheLine) { // placeholder variable
-    //     driveDirection = RightRight;
-    // }
+    } while (isOffline)
 
     // Center the echo sensor.
     softPwmWrite(SERVO_TRIGGER, 15);
 }
 
-// Obstacle Sensing
 void checkSensors() {
-    int isWaitingForObstacle = 0;
-
     while (!haltProgram) {
-        // Check close range sensor first, echo sensor has trouble at this range
-        if (!digitalRead(CLOSE_RANGE_SENSOR)) {
-            pthread_mutex_lock(&mutex);
-            isBlockedByObstacle = 1;
+        pthread_mutex_lock(&obstacleMutex);
+        if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
+            isBlockedByObstacle = true;
+            lineControl = false;
             // Wait 5 seconds to check if the obstacle has moved.
-            if (!isWaitingForObstacle) {
+            if (!haveWaitedForObstacle) {
                 delay(5000);
-                isWaitingForObstacle = 1;
+                haveWaitedForObstacle = true;
             } else {
                 moveAroundObstacle();
+                lineControl = true;
             }
-            pthread_mutex_unlock(&mutex);
         } else {
-            // If we're not preparing for collision, check the distance.
-            pthread_mutex_lock(&mutex);
-            if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
-                isBlockedByObstacle = 1;
-                // Wait 5 seconds to check if the obstacle has moved.
-                if (!isWaitingForObstacle) {
-                    delay(5000);
-                    isWaitingForObstacle = 1;
-                } else {
-                    moveAroundObstacle();
-                }
-            } else {
-                isBlockedByObstacle = 0;
-                isWaitingForObstacle = 0;
-            }
-            pthread_mutex_unlock(&mutex);
+            isBlockedByObstacle = false;
+            haveWaitedForObstacle = false;
+            lineControl = true;
         }
+        pthread_mutex_unlock(&obstacleMutex);
     }
-
     pthread_exit(0);
 }
+
 pthread_mutex_t trapS = PTHREAD_MUTEX_INITIALIZER;
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
     pthread_mutex_lock(&trapS);
   while( isRunning ) {
-    driveDirection = lineMatrix
-                          [digitalRead(LINE_LEFT_PIN)]
-                          [digitalRead(LINE_MIDDLE_PIN)]
-                          [digitalRead(LINE_RIGHT_PIN)]
-                          [digitalRead(LINE_BOTTOM_PIN)];
+      if (lineControl) {
+          driveDirection = lineMatrix
+              [digitalRead(LINE_LEFT_PIN)]
+              [digitalRead(LINE_MIDDLE_PIN)]
+              [digitalRead(LINE_RIGHT_PIN)]
+              [digitalRead(LINE_BOTTOM_PIN)];
+      }
   }
   pthread_mutex_unlock(&trapS);
   return NULL;
