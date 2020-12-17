@@ -347,6 +347,7 @@ void *runMotor(void *u)
 }
 
 // Obstacle Sensing
+float objectDistance = 0.0;
 pthread_mutex_t obstacleMutex = PTHREAD_MUTEX_INITIALIZER;
 float echoSensorDistance() {
     digitalWrite(ECHO_SENSOR_TRIGGER, HIGH);
@@ -368,7 +369,9 @@ float echoSensorDistance() {
     }
 
     double timeDifference = ((double) (stop - start)) / CLOCKS_PER_SEC;
-    return (((float) timeDifference * 340) / 2) * 100;
+    objectDistance = (((float) timeDifference * 340) / 2) * 100;
+    printf("\rObject distance = %f", objectDistance);
+    return objectDistance;
 }
 
 void moveAroundObstacle() {
