@@ -59,7 +59,8 @@ enum direction
     Right,
     RightRight,
     RightRightRight,
-    Repeat
+    Repeat,
+    Offline
 };
 //Matrix constants
 #define _ 1
@@ -73,7 +74,7 @@ enum direction
 #define BOTTOM 2
 
 enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
-    [_][_][_][_] = Backward,            // 0
+    [_][_][_][_] = Offline,            // 0
     [L][_][R][_] = Forward,            // 6
     [L][M][R][_] = Repeat,            //11
     [L][_][R][B] = Repeat,            //13
@@ -93,7 +94,9 @@ enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
 
 //Global Variables
 bool haltProgram = false;                                  //Terminate All
-enum direction driveDirection;                             //Drive Direction
+enum direction lineDirection;                             //Drive Direction
+enum direction obstacleDirection;
+bool isOffline = false;
 bool ninetyDegLeft, ninetyDegRight, threesixtyDeg = false; //Static Turns
 bool isBlockedByObstacle = false;                          //Obstacle Blocking
 bool haveWaitedForObstacle = false;                        //Obstacle Sensing
@@ -372,25 +375,17 @@ void moveAroundObstacle() {
     softPwmWrite(SERVO_TRIGGER, 25);
     // Hard turn to the left, in place about 90 degrees.
     // This will depend on how far the servo allows the sensor to rotate.
-    driveDirection = LeftLeftLeft;
+    obstacleDirection = LeftLeftLeft;
     delay(1000);
 
     // Turning around the obstacle until we get back to the line
-    bool isOffline = true;
     do {
-        if (lineMatrix
-        [digitalRead(LINE_LEFT_PIN)]
-        [digitalRead(LINE_MIDDLE_PIN)]
-        [digitalRead(LINE_RIGHT_PIN)]
-        [digitalRead(LINE_BOTTOM_PIN)] != None) {
-            isOffline = false;
-        }
         // Turn softly
         if (echoSensorDistance() < DISTANCE_THRESHOLD) {
-            driveDirection = Right;
+            obstacleDirection = Right;
         } else {
             // Lost sight of the obstacle, so turn a little harder
-            driveDirection = RightRight;
+            obstacleDirection = RightRight;
         }
         delay(500);
     } while (isOffline);
@@ -426,18 +421,22 @@ pthread_mutex_t trapS = PTHREAD_MUTEX_INITIALIZER;
 bool isRunning = true;
 void* lineSensorThread(void* arg) {
   pthread_mutex_lock(&trapS);
-  enum direction driveDirectionTemp;
+  enum direction lineDirectionTemp;
   while( isRunning ) {
-    driveDirectionTemp = lineMatrix
+    lineDirectionTemp = lineMatrix
                           [digitalRead(LINE_LEFT_PIN)]
                           [digitalRead(LINE_MIDDLE_PIN)]
                           [digitalRead(LINE_RIGHT_PIN)]
                           [digitalRead(LINE_BOTTOM_PIN)];
-    if (driveDirectionTemp == Repeat){
-
+    if (lineDirectionTemp == Repeat){
+    }
+    else if(lineDirectionTemp == Offline) {
+        lineDirection = Backward
+        isOffline = false;
     }
     else{
-        driveDirection = driveDirectionTemp;
+        lineDirection = lineDirectionTemp;
+        isOffline = true;
     }
       printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
                           digitalRead(LINE_MIDDLE_PIN),
@@ -458,6 +457,17 @@ void startLineSensorThread() {
 void stopLineSensorThread() {
   isRunning = false;
   pthread_join( lineSensorPID,  NULL );
+}
+
+void lineORobstacle() {
+    while(!haltProgram) {
+        if(isBlockedByObstacle) {
+            driveDirection = obstacleDirection;
+        }
+        else {
+            driveDirection = lineDirection;
+        }
+    }
 }
 // FAILED ATTEMPT
 // void MotorHotkey()
@@ -577,9 +587,12 @@ int main()
     // // Test Obstacle Sensor
     pthread_t obstacleThread;
     pthread_create(&obstacleThread, NULL, (void *(*)(void *)) &checkSensors, NULL);
+    pthread_t lineORobstacleThread;
+    pthread_create(&lineORobstacleThread, NULL, lineORobstacle, NULL)
     checkSensors();
     pthread_join(MotorThread, NULL); //Main Thread waits for the p1 thread to terminate before continuing main exeuction
     pthread_join(obstacleThread, NULL);
+    pthread_join()
     stopLineSensorThread();
     // haltProgram = false;
     // End Test
