@@ -381,7 +381,8 @@ void moveAroundObstacle() {
     // This will depend on how far the servo allows the sensor to rotate.
 
     // Turning around the obstacle until we get back to the line
-    for(int i = 15; i >= 5; i--){
+    // pthread_mutex_lock(&obstacleMutex);
+    for(int i = 13; i >= 5; i--){
         softPwmWrite(SERVO_TRIGGER, i);
         delay(100);
     }
@@ -390,23 +391,32 @@ void moveAroundObstacle() {
     obstacleDirection = None;
     delay(1000);
     obstacleDirection = Forward;
-    delay(1000);
+    delay(1500);
     obstacleDirection = None;
     delay(1000);
     obstacleDirection = RightRight;
     delay(500);
     obstacleDirection = None;
     delay(1000);
-    for(int i = 5; i <= 15; i++){
+    for(int i = 5; i <= 13; i++){
         softPwmWrite(SERVO_TRIGGER, i);
         delay(100);
     }
     while(isOffline) {
         obstacleDirection = Forward;
+        delay(1500);
+        obstacleDirection = None;
         delay(1000);
         obstacleDirection = RightRight;
+        delay(500);
+        obstacleDirection = None;
+        delay(1000);
+        obstacleDirection = Forward;
+        delay(1500);
+        obstacleDirection = None;
         delay(1000);
     }
+    // pthread_mutex_unlock(&obstacleMutex);
     // Center the echo sensor.
     // softPwmWrite(SERVO_TRIGGER, 13);
     
@@ -461,11 +471,11 @@ void* lineSensorThread(void* arg) {
     }
     else if(lineDirectionTemp == Offline) {
         lineDirection = None;
-        isOffline = false;
+        isOffline = true;
     }
     else{
         lineDirection = lineDirectionTemp;
-        isOffline = true;
+        isOffline = false;
     }
     pthread_mutex_unlock(&obstacleMutex);
     //   printf("\r %d %d %d %d",digitalRead(LINE_LEFT_PIN),
