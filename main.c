@@ -375,16 +375,19 @@ float echoSensorDistance() {
     return objectDistance;
 }
 
-void delayWithCheck(int delayAmount, int delayIncrement, bool flag, bool breakIfIm) {
+//returns 0 if delay was successful with no breaks
+//returns 1 if delay was broken
+int delayWithCheck(int delayAmount, int delayIncrement, bool flag, bool breakIfIm) {
     int steps = delayAmount / delayIncrement;
     for( int i = 0; i <= steps; i++) {
         if(flag == breakIfIm) {
-            break;
+            return 1;
         }
         else {
             delay(delayIncrement);
         }
     }
+    return 0;
 }
 
 void moveAroundObstacle() {
@@ -416,17 +419,29 @@ void moveAroundObstacle() {
     }
     while(true) {
         obstacleDirection = Forward;
-        delayWithCheck(1500, 50, isOffline, false);
+        if(delayWithCheck(1500, 50, isOffline, false)){
+            break;
+        }
         obstacleDirection = None;
-        delayWithCheck(1000, 50, isOffline, false);
+        if(delayWithCheck(1000, 50, isOffline, false)){
+            break;
+        }
         obstacleDirection = RightRight;
-        delayWithCheck(500, 50, isOffline, false);
+        if(delayWithCheck(500, 50, isOffline, false)){
+            break;
+        }
         obstacleDirection = None;
-        delayWithCheck(1000, 50, isOffline, false);
+        if(delayWithCheck(1000, 50, isOffline, false)){
+            break;
+        }
         obstacleDirection = Forward;
-        delayWithCheck(1500, 50, isOffline, false);
+        if(delayWithCheck(1500, 50, isOffline, false)){
+            break;
+        }
         obstacleDirection = None;
-        delayWithCheck(1000, 50, isOffline, false);
+        if(delayWithCheck(1000, 50, isOffline, false)){
+            break;
+        }
     }
     // pthread_mutex_unlock(&obstacleMutex);
     // Center the echo sensor.
