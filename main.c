@@ -73,7 +73,7 @@ enum direction
 #define BOTTOM 2
 
 enum direction lineMatrix[LEFT][MIDDLE][RIGHT][BOTTOM] = {
-    [_][_][_][_] = None,            // 0
+    [_][_][_][_] = Backward,            // 0
     [L][_][R][_] = Forward,            // 6
     [L][M][R][_] = Repeat,            //11
     [L][_][R][B] = Repeat,            //13
@@ -294,9 +294,9 @@ void *runMotor(void *u)
         {
             // printf("Should be driving LEEEEFT!\n");
             softPwmWrite(VOLT_MOT_A, 25);
-            softPwmWrite(VOLT_MOT_B, 75);
+            softPwmWrite(VOLT_MOT_B, 40);
             softPwmWrite(VOLT_MOT_C, 50);
-            softPwmWrite(VOLT_MOT_D, 75);
+            softPwmWrite(VOLT_MOT_D, 40);
             softPwmWrite(R_MOT_A, 10);
             softPwmWrite(F_MOT_B, 75);
             softPwmWrite(R_MOT_C, 25);
@@ -307,9 +307,9 @@ void *runMotor(void *u)
         else if (driveDirection == RightRightRight)
         {
             // printf("Should be driving RIIIIIGHHT!\n");
-            softPwmWrite(VOLT_MOT_A, 75);
+            softPwmWrite(VOLT_MOT_A, 40);
             softPwmWrite(VOLT_MOT_B, 10);
-            softPwmWrite(VOLT_MOT_C, 75);
+            softPwmWrite(VOLT_MOT_C, 40);
             softPwmWrite(VOLT_MOT_D, 10);
             softPwmWrite(F_MOT_A, 75);
             softPwmWrite(R_MOT_B, 25);
