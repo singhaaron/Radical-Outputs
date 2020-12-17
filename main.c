@@ -436,21 +436,23 @@ void* checkSensors() {
         if (echoSensorDistance() <= DISTANCE_THRESHOLD) {
             pthread_mutex_lock(&obstacleMutex);
             isBlockedByObstacle = true;
-            printf("\robstacle");
+            printf("sensed obstacle\n");
             fflush(stdout);
             lineControl = false;
             obstacleDirection = None;
             // Wait 5 seconds to check if the obstacle has moved.
             if (!haveWaitedForObstacle) {
-                printf("\rwait     ");
+                printf("waiting on obstacle timer\n");
                 fflush(stdout);
                 delay(1000);
                 haveWaitedForObstacle = true;
             } else {
-                printf("\rGo     ");
+                printf("moving around obstacle\n");
                 fflush(stdout);
                 moveAroundObstacle();
                 lineControl = true;
+                printf("giving control back to line control");
+                fflush(stdout);
             }
         } else {
             isBlockedByObstacle = false;
@@ -504,14 +506,31 @@ void stopLineSensorThread() {
 
 void lineORobstacle() {
     while(!haltProgram) {
+        //debugging flags
+        int flagTemp = 0;
+        int flag = 0;
         if(!lineControl) {
-            // printf("\r1");
-            // fflush(stdout);
+            //start debugging statements
+            flag = 0;
+            if(flagTemp != flag) {
+                flagTemp = flag;
+                printf("getting direction from obstacle direction");
+                fflush(stdout);
+            }
+            //end debugging statements
+
             driveDirection = obstacleDirection;
         }
         else {
-            // printf("\r0");
-            // fflush(stdout);
+            //start debugging statements
+            flag = 1;
+            if(flagTemp != flag) {
+                flagTemp = flag;
+                printf("getting direction from line direction");
+                fflush(stdout);
+            }
+            //end debugging statements
+
             driveDirection = lineDirection;
         }
     }
